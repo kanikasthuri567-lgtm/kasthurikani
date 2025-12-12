@@ -1,0 +1,196 @@
+
+package college;
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class CollegeManagementSystem {
+
+    static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        int choice;
+
+        do {
+            System.out.println("\n===== COLLEGE MANAGEMENT SYSTEM =====");
+            System.out.println("1. Add Student");
+            System.out.println("2. View Students");
+            System.out.println("3. Update Student");
+            System.out.println("4. Delete Student");
+            System.out.println("5. Add Course");
+            System.out.println("6. View Courses");
+            System.out.println("7. Exit");
+            System.out.print("Enter choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1: addStudent(); break;
+                case 2: viewStudents(); break;
+                case 3: updateStudent(); break;
+                case 4: deleteStudent(); break;
+                case 5: addCourse(); break;
+                case 6: viewCourses(); break;
+                case 7: System.out.println("Goodbye!"); break;
+                default: System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 7);
+    }
+
+    // --------------------- ADD STUDENT -------------------------
+    public static void addStudent() {
+        try {
+            Connection con = DBConnection.getConnection();
+            String sql = "INSERT INTO students(student_name, department, year) VALUES(?, ?, ?)";
+
+            PreparedStatement pst = con.prepareStatement(sql);
+
+            sc.nextLine();
+            System.out.print("Enter Student Name: ");
+            String name = sc.nextLine();
+
+            System.out.print("Enter Department: ");
+            String dept = sc.nextLine();
+
+            System.out.print("Enter Year (1-4): ");
+            int year = sc.nextInt();
+
+            pst.setString(1, name);
+            pst.setString(2, dept);
+            pst.setInt(3, year);
+
+            pst.executeUpdate();
+            System.out.println("Student Added Successfully!");
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    // --------------------- VIEW STUDENTS -------------------------
+    public static void viewStudents() {
+        try {
+            Connection con = DBConnection.getConnection();
+            ResultSet rs = con.createStatement().executeQuery("SELECT * FROM students");
+
+            System.out.println("\n------ STUDENT LIST ------");
+            while (rs.next()) {
+                System.out.println(
+                        "ID: " + rs.getInt("student_id") +
+                        " | Name: " + rs.getString("student_name") +
+                        " | Dept: " + rs.getString("department") +
+                        " | Year: " + rs.getInt("year")
+                );
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    // --------------------- UPDATE STUDENT -------------------------
+    public static void updateStudent() {
+        try {
+            Connection con = DBConnection.getConnection();
+            System.out.print("Enter Student ID to Update: ");
+            int id = sc.nextInt();
+            sc.nextLine();
+
+            System.out.print("Enter New Name: ");
+            String name = sc.nextLine();
+
+            System.out.print("Enter New Department: ");
+            String dept = sc.nextLine();
+
+            System.out.print("Enter New Year: ");
+            int year = sc.nextInt();
+
+            String sql = "UPDATE students SET student_name=?, department=?, year=? WHERE student_id=?";
+            PreparedStatement pst = con.prepareStatement(sql);
+
+            pst.setString(1, name);
+            pst.setString(2, dept);
+            pst.setInt(3, year);
+            pst.setInt(4, id);
+
+            int rows = pst.executeUpdate();
+
+            if (rows > 0)
+                System.out.println("Student Updated Successfully!");
+            else
+                System.out.println("Student ID Not Found!");
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    // --------------------- DELETE STUDENT -------------------------
+    public static void deleteStudent() {
+        try {
+            Connection con = DBConnection.getConnection();
+            System.out.print("Enter Student ID to Delete: ");
+            int id = sc.nextInt();
+
+            String sql = "DELETE FROM students WHERE student_id=?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, id);
+
+            int rows = pst.executeUpdate();
+
+            if (rows > 0)
+                System.out.println("Student Deleted Successfully!");
+            else
+                System.out.println("Student ID Not Found!");
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    // --------------------- ADD COURSE -------------------------
+    public static void addCourse() {
+        try {
+            Connection con = DBConnection.getConnection();
+            String sql = "INSERT INTO courses(course_name, faculty) VALUES(?, ?)";
+
+            PreparedStatement pst = con.prepareStatement(sql);
+
+            sc.nextLine();
+            System.out.print("Enter Course Name: ");
+            String course = sc.nextLine();
+
+            System.out.print("Enter Faculty Name: ");
+            String faculty = sc.nextLine();
+
+            pst.setString(1, course);
+            pst.setString(2, faculty);
+
+            pst.executeUpdate();
+            System.out.println("Course Added Successfully!");
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    // --------------------- VIEW COURSES -------------------------
+    public static void viewCourses() {
+        try {
+            Connection con = DBConnection.getConnection();
+            ResultSet rs = con.createStatement().executeQuery("SELECT * FROM courses");
+
+            System.out.println("\n------ COURSE LIST ------");
+            while (rs.next()) {
+                System.out.println(
+                        "ID: " + rs.getInt("course_id") +
+                        " | Course: " + rs.getString("course_name") +
+                        " | Faculty: " + rs.getString("faculty")
+                );
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+}
