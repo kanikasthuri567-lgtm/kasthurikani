@@ -1,0 +1,21 @@
+DROP DATABASE IF EXISTS collegeDB;
+
+CREATE DATABASE collegeDB;
+
+USE collegeDB;
+
+-- Student Table
+CREATE TABLE students (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_name VARCHAR(100),
+    department VARCHAR(50),
+    year INT
+);
+
+-- Course Table
+CREATE TABLE courses (
+    course_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_name VARCHAR(100),
+    faculty VARCHAR(100)
+);
+
